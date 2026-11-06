@@ -1,0 +1,26 @@
+[package]
+name = "migration"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+name = "migration"
+path = "src/lib.rs"
+
+# `src/main.rs` calls `cli::run_cli`, which only exists with the `cli` feature.
+# It is on by default, so `cargo run -p migration -- up` keeps working, and the
+# application depends on this crate with `default-features = false` to keep
+# clap and sea-orm-cli out of the server binary.
+[[bin]]
+name = "migration"
+path = "src/main.rs"
+required-features = ["cli"]
+
+[features]
+default = ["cli"]
+cli = ["sea-orm-migration/cli"]
+
+[dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+sea-orm-migration = { version = "2", default-features = false, features = ["sqlx-sqlite", "runtime-tokio"] }

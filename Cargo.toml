@@ -1,0 +1,80 @@
+[workspace]
+members = ["migration"]
+
+[package]
+name = "axum-template"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+publish = false
+build = "build.rs"
+
+[build-dependencies]
+# So that build.rs can read SASS_BIN from `.env` too
+dotenvy = "0.15"
+
+[dependencies]
+# SeaORM migrations (local crate, see ./migration).
+# `default-features = false` drops its `cli` feature: the server needs
+# `Migrator`, not clap and sea-orm-cli.
+migration = { path = "migration", default-features = false }
+
+# Web
+axum = "0.8"
+# `sync` and `time` are used by the shutdown deadline in main.rs.
+tokio = { version = "1", features = [
+    "macros",
+    "net",
+    "rt-multi-thread",
+    "signal",
+    "sync",
+    "time",
+] }
+# `util` is what brings `ServiceExt::oneshot`, used by the router tests.
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.7.1", features = [
+    "catch-panic",
+    "compression-full",
+    "fs",
+    "set-header",
+    "timeout",
+    "trace",
+] }
+serde = { version = "1", features = ["derive"] }
+
+# Templates
+askama = "0.16"
+askama_web = { version = "0.16", features = ["axum-0.8", "tracing-0.1"] }
+
+# Translation (Fluent)
+fluent-templates = "0.15"
+fluent-bundle = "0.16" # same version as the one used by fluent-templates
+
+# Database (SeaORM drives SQLite through sqlx, see the `sqlx-sqlite` feature)
+sea-orm = { version = "2", features = ["sqlx-sqlite", "runtime-tokio"] }
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+
+# Logs
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+log = "0.4" # only for the LevelFilter type SeaORM's sqlx_logging_level takes
+
+# Misc
+anyhow = "1"
+thiserror = "2"
+dotenvy = "0.15"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+
+[profile.dev]
+incremental = true
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

@@ -1,0 +1,10 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="hero">
+  <h1>{{ ctx.t("home-title") }}</h1>
+  <p class="lead">{{ ctx.t("home-intro") }}</p>
+  <p class="muted">{{ ctx.t_arg("home-note-count", "count", note_count) }}</p>
+  <a class="button" href="/notes">{{ ctx.t("home-cta") }}</a>
+</section>
+{% endblock %}

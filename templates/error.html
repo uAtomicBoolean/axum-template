@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{# Last-resort page for a 5xx: no layout and no translation on purpose, so it
+   still renders when i18n or the database is what failed. A 404 is served by
+   templates/404.html instead, in the layout and translated. #}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ code }} · {{ reason }}</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+  <main class="container hero">
+    <h1>{{ code }}</h1>
+    <p class="lead">{{ reason }}</p>
+    <a class="button" href="/">← Back to home</a>
+  </main>
+</body>
+</html>

@@ -1,0 +1,81 @@
+@use "tokens" as *;
+
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: space(3) space(6);
+  padding-block: space(3);
+}
+
+.brand {
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  gap: space(4);
+
+  a {
+    color: var(--muted);
+    text-decoration: none;
+
+    &:hover,
+    &[aria-current="page"] {
+      color: var(--text);
+    }
+
+    &[aria-current="page"] {
+      font-weight: 600;
+    }
+  }
+}
+
+.lang-switch {
+  display: flex;
+  gap: space(2);
+  margin: 0 0 0 auto;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+
+  a {
+    color: var(--muted);
+    text-decoration: none;
+    padding: space(1) space(2);
+    border-radius: $radius;
+
+    &[aria-current="true"] {
+      color: var(--text);
+      background: var(--bg);
+    }
+  }
+}
+
+.site-footer {
+  padding-block: space(6);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.grid {
+  display: grid;
+  gap: space(6);
+  align-items: start;
+
+  @include md {
+    grid-template-columns: 20rem 1fr;
+  }
+}
+
+.hero {
+  padding-block: space(8);
+}

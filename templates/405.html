@@ -1,0 +1,11 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ ctx.t("notallowed-title") }} · {{ ctx.t("app-name") }}{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>{{ ctx.t("notallowed-title") }}</h1>
+  <p class="lead">{{ ctx.t("notallowed-text") }}</p>
+  <a class="button" href="/">{{ ctx.t("notfound-back") }}</a>
+</section>
+{% endblock %}

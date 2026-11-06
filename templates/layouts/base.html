@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="{{ ctx.lang() }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ ctx.t("app-name") }}{% endblock %}</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/main.css">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="/">{{ ctx.t("app-name") }}</a>
+
+      <nav class="nav" aria-label="{{ ctx.t("nav-label") }}">
+        <a href="/"{% if ctx.is_active("/") %} aria-current="page"{% endif %}>{{ ctx.t("nav-home") }}</a>
+        <a href="/notes"{% if ctx.is_active("/notes") %} aria-current="page"{% endif %}>{{ ctx.t("nav-notes") }}</a>
+      </nav>
+
+      <ul class="lang-switch" aria-label="{{ ctx.t("lang-switch") }}">
+        {% for l in ctx.languages() %}
+        <li>
+          <a href="/lang/{{ l.code }}" hreflang="{{ l.code }}" lang="{{ l.code }}"{% if l.code == ctx.lang() %} aria-current="true"{% endif %}>{{ l.label }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">{{ ctx.t("footer-text") }}</div>
+  </footer>
+</body>
+</html>

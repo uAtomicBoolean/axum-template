@@ -1,0 +1,52 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ ctx.t("notes-title") }} · {{ ctx.t("app-name") }}{% endblock %}
+
+{% block content %}
+<h1>{{ ctx.t("notes-title") }}</h1>
+
+<div class="grid">
+  <form class="card stack" method="post" action="/notes">
+    <h2>{{ ctx.t("notes-new") }}</h2>
+
+    {% if let Some(message) = error %}
+    <p class="alert" role="alert">{{ message }}</p>
+    {% endif %}
+
+    <label class="field">
+      <span>{{ ctx.t("notes-field-title") }}</span>
+      <input name="title" value="{{ form.title }}" maxlength="200" required>
+    </label>
+
+    <label class="field">
+      <span>{{ ctx.t("notes-field-body") }}</span>
+      <textarea name="body" rows="4">{{ form.body }}</textarea>
+    </label>
+
+    <button class="button" type="submit">{{ ctx.t("notes-submit") }}</button>
+  </form>
+
+  <section>
+    {% if notes.is_empty() %}
+    <p class="muted">{{ ctx.t("notes-empty") }}</p>
+    {% else %}
+    <ul class="notes">
+      {% for note in notes %}
+      <li class="card note">
+        <div class="note__head">
+          <h3>{{ note.title }}</h3>
+          <form method="post" action="/notes/{{ note.id }}/delete">
+            <button class="button button--ghost" type="submit">{{ ctx.t("notes-delete") }}</button>
+          </form>
+        </div>
+        {% if !note.body.is_empty() %}
+        <p>{{ note.body }}</p>
+        {% endif %}
+        <time class="muted" datetime="{{ note.created_at.to_rfc3339() }}">{{ ctx.datetime(note.created_at) }}</time>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

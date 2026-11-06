@@ -1,0 +1,116 @@
+@use "tokens" as *;
+
+.button {
+  display: inline-block;
+  padding: space(2) space(4);
+  border: 1px solid transparent;
+  border-radius: $radius;
+  background: var(--accent);
+  color: var(--accent-text);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.button--ghost {
+  padding: space(1) space(3);
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+
+  &:hover {
+    color: var(--danger);
+    border-color: var(--danger);
+    filter: none;
+  }
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: $radius;
+  padding: space(4);
+}
+
+.stack > * + * {
+  margin-top: space(4);
+}
+
+.field {
+  display: grid;
+  gap: space(1);
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  input,
+  textarea {
+    width: 100%;
+    padding: space(2) space(3);
+    border: 1px solid var(--border);
+    border-radius: $radius;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-weight: 400;
+
+    &:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: -1px;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.alert {
+  margin: 0;
+  padding: space(2) space(3);
+  border-radius: $radius;
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.notes {
+  display: grid;
+  gap: space(3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.note {
+  p {
+    margin: space(2) 0;
+    white-space: pre-line;
+  }
+
+  time {
+    font-size: 0.8rem;
+  }
+}
+
+.note__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: space(3);
+
+  form {
+    margin: 0;
+  }
+}
