@@ -1,8 +1,5 @@
 //! Build script: compiles `styles/main.scss` into `static/css/main.css`
 //! with the Dart Sass CLI, on every `cargo build` / `cargo run`.
-//!
-//! Other knobs:
-//! - `release` profile: compressed CSS; otherwise readable CSS.
 
 use std::{
     env, fs,
