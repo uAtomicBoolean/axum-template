@@ -73,9 +73,6 @@ watchexec -r -e rs,html,ftl,scss,toml -- cargo run
     └── routes/               one file per section of the site
 ```
 
-The *why* of each choice is in the doc comments, next to the code. The pages
-below cover the rest.
-
 ## Documentation
 
 | Page | What it covers |
