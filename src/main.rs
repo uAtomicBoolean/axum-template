@@ -5,6 +5,7 @@ mod db;
 mod entities;
 mod error;
 mod i18n;
+mod payloads;
 mod prelude;
 mod routes;
 mod telemetry;

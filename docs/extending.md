@@ -4,6 +4,7 @@
 
 - [The `Ctx` context](#the-ctx-context)
 - [Adding a page](#adding-a-page)
+- [Request and response bodies](#request-and-response-bodies)
 - [Adding a table](#adding-a-table)
 
 ## The `Ctx` context
@@ -64,6 +65,47 @@ layout uses it (title, menu, language), and so do your own templates:
 
 `src/routes/notes.rs` shows a full CRUD (form, validation, redirect) and
 `src/routes/api.rs` a JSON route.
+
+## Request and response bodies
+
+`src/payloads/` holds every struct that exists only to cross the HTTP
+boundary: what a handler deserializes from a request, and what it serializes
+into a response.
+
+Nothing of the sort goes into `src/entities/`, which stays free of
+`Serialize`, `Deserialize` and of anything else that knows about HTTP: that
+folder is regenerated from the database (see
+[Adding a table](#adding-a-table)), so anything written there is lost on the
+next run.
+
+The sub-modules of `payloads` are private, and `src/payloads/mod.rs`
+re-exports every type:
+
+```rust
+// src/payloads/mod.rs
+mod note;
+
+pub use note::{NoteForm, NoteResponse};
+```
+
+A routes module then imports the type, never the module:
+
+```rust
+use crate::entities::note;         // the entity: note::Model, note::Column
+use crate::payloads::NoteResponse; // the JSON shape
+```
+
+Importing `crate::payloads::note` instead would collide with
+`crate::entities::note`, since two modules cannot share a name in the same
+file. Re-exporting at the root of `payloads` is what keeps that collision
+from ever happening, the same way `src/entities/prelude.rs` exposes
+`Note` instead of `note::Entity`.
+
+A response type keeps its fields private and is built by a
+`From<note::Model>` impl, so a handler cannot assemble one the database never
+produced. A form or request body needs `pub` fields as soon as a template
+reads them back — `templates/notes/index.html` refills `NoteForm` after a
+validation error.
 
 ## Adding a table
 

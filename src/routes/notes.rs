@@ -3,6 +3,7 @@
 use chrono::Utc;
 
 use crate::entities::note;
+use crate::payloads::NoteForm;
 use crate::prelude::*;
 
 pub fn routes() -> Router<AppState> {
@@ -18,13 +19,6 @@ struct NotesPage {
     notes: Vec<note::Model>,
     form: NoteForm,
     error: Option<String>,
-}
-
-#[derive(Debug, Default, Deserialize)]
-struct NoteForm {
-    title: String,
-    #[serde(default)]
-    body: String,
 }
 
 async fn index(ctx: Ctx) -> AppResult<NotesPage> {

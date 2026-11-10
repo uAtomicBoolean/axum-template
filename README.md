@@ -70,6 +70,7 @@ watchexec -r -e rs,html,ftl,scss,toml -- cargo run
     ├── i18n.rs               Fluent loading, language negotiation
     ├── telemetry.rs          tracing setup
     ├── entities/             SeaORM entities
+    ├── payloads/             request and response bodies (HTTP boundary)
     └── routes/               one file per section of the site
 ```
 
@@ -77,7 +78,7 @@ watchexec -r -e rs,html,ftl,scss,toml -- cargo run
 
 | Page | What it covers |
 |---|---|
-| [Adding to the template](docs/extending.md) | the `Ctx` context, adding a page, adding a table |
+| [Adding to the template](docs/extending.md) | the `Ctx` context, adding a page, request and response bodies, adding a table |
 | [Translations](docs/i18n.md) | Fluent, language negotiation, plurals, dates |
 | [SCSS](docs/scss.md) | Dart Sass, `SASS_BIN`, working on the styles |
 | [Middleware and security](docs/middleware.md) | the layer stack, headers, what the timeouts do not promise, **what is missing** |
