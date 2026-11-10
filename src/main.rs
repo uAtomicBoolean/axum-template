@@ -34,7 +34,7 @@ async fn main() -> anyhow::Result<()> {
     let listener = TcpListener::bind(addr)
         .await
         .with_context(|| format!("could not listen on {addr}"))?;
-    tracing::info!("server started on {addr}");
+    tracing::info!("server started on http://{addr}");
 
     // The signal future tells the server to start draining, and opens the
     // grace period at the same moment.
