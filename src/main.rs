@@ -1,3 +1,5 @@
+mod app;
+
 use std::{future::IntoFuture, time::Duration};
 
 use anyhow::Context;
@@ -13,18 +15,14 @@ const SHUTDOWN_GRACE: Duration = Duration::from_secs(20);
 async fn main() -> anyhow::Result<()> {
     dotenvy::dotenv().ok();
 
-    let addr = match std::env::var("APP_ADDR") {
-        Ok(a) => a,
-        Err(err) => {
-            tracing::error!("Could not read `APP_ADDR` env var.\n{}", err);
-            panic!("Check `APP_ADDR` in `.env` file.");
-        }
-    };
+    let app = crate::app::App::build();
+    app.init_logging();
 
-    let listener = TcpListener::bind(addr.clone())
+    let server_addr = app.get_server_addr();
+    let listener = TcpListener::bind(server_addr)
         .await
-        .with_context(|| format!("could not listen on {addr}"))?;
-    tracing::info!("server started on {addr}");
+        .with_context(|| format!("could not listen on {server_addr}"))?;
+    tracing::info!("server started on http://{server_addr}");
 
     let router = Router::new().route("/", get(async || "Hello world"));
 

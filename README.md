@@ -4,8 +4,8 @@ An opinionated Rust web application template using axum.
 
 To do:
 
-- [ ] Add an app file / struct will implement the services and utilities used by the project (db, i18n, context, etc).
-- [ ] Configure the application's logging.
+- [x] Add an app file / struct will implement the services and utilities used by the project (db, i18n, context, etc).
+- [x] Configure the application's logging.
 - [ ] Check for the static folder before starting the server.
 - [ ] Add a context struct that will give access to the utilities (db, i81n, app conf ?) and is inserted in each
   request.
