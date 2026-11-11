@@ -24,69 +24,32 @@ fn main() {
     // by fluent-templates, do trigger a recompilation.
     println!("cargo:rerun-if-changed=styles");
     println!("cargo:rerun-if-changed=locales");
-    println!("cargo:rerun-if-env-changed=SASS_BIN");
 
     // Unlike the application, the build script has to load `.env` itself.
-    // Variables already set in the environment win, as dotenvy never overrides.
     if Path::new(".env").exists() {
         println!("cargo:rerun-if-changed=.env");
-        // Don't fail the build over `.env`, but never drop the line silently:
-        // an unquoted Windows path (`C:\dir`) is a parse error, since dotenvy
-        // reads `\d` as an escape.
         if let Err(e) = dotenvy::dotenv() {
-            println!("cargo:warning=could not read .env ({e}); its values are ignored");
+            println!("cargo:error=could not read .env ({e}), please fix its contents.");
+            panic!("Error while reading the .env file.");
         }
     }
 
-    let style = match env::var("PROFILE").as_deref() {
+    let style_generation = match env::var("PROFILE").as_deref() {
         Ok("release") => "compressed",
         _ => "expanded",
     };
 
     fs::create_dir_all("static/css").expect("could not create static/css");
 
-    // A custom location, when given, is tried before PATH.
-    let custom = custom_candidates();
-    if !custom.is_empty() {
-        if try_all(&custom, style) {
-            return;
-        }
-        // A SASS_BIN that leads nowhere is a configuration mistake, so say
-        // so rather than silently falling back to PATH.
-        println!(
-            "cargo:warning=SASS_BIN ({}) is not a Dart Sass executable nor a folder \
-             containing one: falling back to PATH",
-            env::var("SASS_BIN").unwrap_or_default()
-        );
-    }
-
     let from_path: Vec<PathBuf> = EXE_NAMES.iter().map(PathBuf::from).collect();
-    if try_all(&from_path, style) {
+    if try_all(&from_path, style_generation) {
         return;
     }
 
     panic!(
         "Dart Sass not found.\n\
-         Install Dart Sass (https://sass-lang.com/install), or point SASS_BIN at its \
-         executable or at the folder that contains it."
+         Install Dart Sass (https://sass-lang.com/install) and make sure it is in the PATH."
     );
-}
-
-/// `SASS_BIN` either names the executable directly, or the folder holding it.
-fn custom_candidates() -> Vec<PathBuf> {
-    let Some(raw) = env::var_os("SASS_BIN") else {
-        return Vec::new();
-    };
-    let path = PathBuf::from(raw);
-    if path.as_os_str().is_empty() {
-        return Vec::new();
-    }
-
-    if path.is_dir() {
-        EXE_NAMES.iter().map(|name| path.join(name)).collect()
-    } else {
-        vec![path]
-    }
 }
 
 /// Tries each candidate in order. Returns true as soon as one compiled the
@@ -103,11 +66,8 @@ fn try_all(candidates: &[PathBuf], style: &str) -> bool {
     false
 }
 
-/// The executable could not be started: it does not exist here.
-struct NotFound;
-
 /// Runs Dart Sass once. `Ok` carries the warnings it printed.
-fn run_sass(sass: &Path, style: &str) -> Result<String, NotFound> {
+fn run_sass(sass: &Path, style: &str) -> Result<String, ()> {
     let result = Command::new(sass)
         .arg(format!("--style={style}"))
         .arg("--no-source-map")
@@ -124,7 +84,7 @@ fn run_sass(sass: &Path, style: &str) -> Result<String, NotFound> {
             String::from_utf8_lossy(&out.stderr)
         ),
         Err(e) if matches!(e.kind(), ErrorKind::NotFound | ErrorKind::PermissionDenied) => {
-            Err(NotFound)
+            Err(())
         }
         Err(e) => panic!("could not run `{}`: {e}", sass.display()),
     }

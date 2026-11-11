@@ -1,18 +1,8 @@
-mod app;
-mod config;
-mod ctx;
-mod db;
-mod entities;
-mod error;
-mod i18n;
-mod payloads;
-mod prelude;
-mod routes;
-mod telemetry;
-
 use std::{future::IntoFuture, time::Duration};
 
 use anyhow::Context;
+use axum::Router;
+use axum::routing::get;
 use tokio::{net::TcpListener, sync::oneshot};
 
 /// How long the connections still open get to finish, once the shutdown
@@ -21,20 +11,22 @@ const SHUTDOWN_GRACE: Duration = Duration::from_secs(20);
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    // `.env` is optional: every variable has a default value.
     dotenvy::dotenv().ok();
-    telemetry::init();
 
-    let config = config::Config::from_env()?;
-    let addr = config.addr;
+    let addr = match std::env::var("APP_ADDR") {
+        Ok(a) => a,
+        Err(err) => {
+            tracing::error!("Could not read `APP_ADDR` env var.\n{}", err);
+            panic!("Check `APP_ADDR` in `.env` file.");
+        }
+    };
 
-    let state = app::AppState::init(config).await?;
-    let router = app::build(state);
-
-    let listener = TcpListener::bind(addr)
+    let listener = TcpListener::bind(addr.clone())
         .await
         .with_context(|| format!("could not listen on {addr}"))?;
-    tracing::info!("server started on http://{addr}");
+    tracing::info!("server started on {addr}");
+
+    let router = Router::new().route("/", get(async || "Hello world"));
 
     // The signal future tells the server to start draining, and opens the
     // grace period at the same moment.
