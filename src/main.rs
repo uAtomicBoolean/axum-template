@@ -15,7 +15,7 @@ const SHUTDOWN_GRACE: Duration = Duration::from_secs(20);
 async fn main() -> anyhow::Result<()> {
     dotenvy::dotenv().ok();
 
-    let app = crate::app::App::build();
+    let app = app::App::build()?;
     app.init_logging();
 
     let server_addr = app.get_server_addr();

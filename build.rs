@@ -2,7 +2,7 @@
 //! with the Dart Sass CLI, on every `cargo build` / `cargo run`.
 
 use std::{
-    env, fs,
+    env,
     io::ErrorKind,
     path::{Path, PathBuf},
     process::Command,
@@ -38,8 +38,6 @@ fn main() {
         Ok("release") => "compressed",
         _ => "expanded",
     };
-
-    fs::create_dir_all("static/css").expect("could not create static/css");
 
     let from_path: Vec<PathBuf> = EXE_NAMES.iter().map(PathBuf::from).collect();
     if try_all(&from_path, style_generation) {
@@ -83,9 +81,7 @@ fn run_sass(sass: &Path, style: &str) -> Result<String, ()> {
             "Dart Sass failed on {INPUT}:\n{}",
             String::from_utf8_lossy(&out.stderr)
         ),
-        Err(e) if matches!(e.kind(), ErrorKind::NotFound | ErrorKind::PermissionDenied) => {
-            Err(())
-        }
+        Err(e) if matches!(e.kind(), ErrorKind::NotFound | ErrorKind::PermissionDenied) => Err(()),
         Err(e) => panic!("could not run `{}`: {e}", sass.display()),
     }
 }
