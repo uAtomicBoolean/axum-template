@@ -22,8 +22,8 @@ To do:
     - [ ] logging for the requests.
 - [ ] Manage translations and give access to them trough the context.
 - [ ] Add database management with entities :
-    - [ ] follow the schema-first format of sea-orm.
-    - [ ] the entities/ folder should be automatically generated (check that the prelude.rs is here).
+    - [x] follow the schema-first format of sea-orm.
+    - [x] the entities/ folder should be automatically generated (check that the prelude.rs is here).
     - [ ] give access to the database through the context.
     - [ ] Manage payload structs (DTO) to properly send and receive entities without leaking sensitive data.
 

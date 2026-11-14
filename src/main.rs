@@ -15,8 +15,9 @@ const SHUTDOWN_GRACE: Duration = Duration::from_secs(20);
 async fn main() -> anyhow::Result<()> {
     dotenvy::dotenv().ok();
 
-    let app = app::App::build()?;
+    let mut app = app::App::build()?;
     app.init_logging();
+    app.init_database().await?;
 
     let server_addr = app.get_server_addr();
     let listener = TcpListener::bind(server_addr)

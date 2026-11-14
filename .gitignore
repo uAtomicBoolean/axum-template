@@ -41,5 +41,6 @@ http-client.private.env.json
 
 
 /data
+!data/.gitkeep
 /static/css/
 .env
