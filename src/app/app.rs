@@ -1,4 +1,6 @@
+use crate::app;
 use crate::app::config::Config;
+use axum::Router;
 use sea_orm::DatabaseConnection;
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -39,5 +41,13 @@ impl AppState {
 
     pub fn get_server_addr(&self) -> SocketAddr {
         self.config.app_addr.clone()
+    }
+
+    /// Used to avoid using directly the middleware imports in other files.
+    pub fn apply_middlewares<S>(&self, router: Router<S>) -> Router<S>
+    where
+        S: Clone + Send + Sync + 'static,
+    {
+        app::middlewares::apply(router)
     }
 }

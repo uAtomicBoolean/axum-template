@@ -25,9 +25,11 @@ async fn main() -> anyhow::Result<()> {
         .with_context(|| format!("could not listen on {server_addr}"))?;
     tracing::info!("server started on http://{server_addr}");
 
-    let router = Router::new()
-        .route("/", get(async || "Hello world"))
-        .with_state(app);
+    let router = app.apply_middlewares(
+        Router::new()
+            .route("/", get(async || "Hello world"))
+            .with_state(app.clone()),
+    );
 
     // The signal future tells the server to start draining, and opens the
     // grace period at the same moment.
