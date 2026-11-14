@@ -15,7 +15,7 @@ const SHUTDOWN_GRACE: Duration = Duration::from_secs(20);
 async fn main() -> anyhow::Result<()> {
     dotenvy::dotenv().ok();
 
-    let mut app = app::App::build()?;
+    let mut app = app::AppState::build()?;
     app.init_logging();
     app.init_database().await?;
 
@@ -25,7 +25,9 @@ async fn main() -> anyhow::Result<()> {
         .with_context(|| format!("could not listen on {server_addr}"))?;
     tracing::info!("server started on http://{server_addr}");
 
-    let router = Router::new().route("/", get(async || "Hello world"));
+    let router = Router::new()
+        .route("/", get(async || "Hello world"))
+        .with_state(app);
 
     // The signal future tells the server to start draining, and opens the
     // grace period at the same moment.

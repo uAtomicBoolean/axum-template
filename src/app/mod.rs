@@ -1,5 +1,10 @@
 mod app;
-mod config;
+mod context;
 mod db;
 
-pub use app::App;
+// Public so that `Context::config` does not expose a more private type than
+// the struct holding it.
+pub mod config;
+
+pub use app::AppState;
+pub use context::Context;

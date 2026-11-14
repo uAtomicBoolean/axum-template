@@ -5,14 +5,14 @@ use std::sync::Arc;
 use tracing_subscriber::EnvFilter;
 
 #[derive(Clone)]
-pub struct App {
-    db: Option<DatabaseConnection>,
-    config: Arc<Config>,
+pub struct AppState {
+    pub(super) db: Option<DatabaseConnection>,
+    pub(super) config: Arc<Config>,
 }
 
-impl App {
+impl AppState {
     pub fn build() -> anyhow::Result<Self> {
-        Ok(App {
+        Ok(AppState {
             db: None,
             config: Arc::new(Config::init()?),
         })
